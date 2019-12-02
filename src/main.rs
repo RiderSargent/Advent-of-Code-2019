@@ -12,7 +12,7 @@ fn main() {
     let mut total_fuel = 0;
 
     for line in reader.lines() {
-        let mass: i32 = line.unwrap().parse().unwrap();
+        let mass = line.unwrap().parse().unwrap();
 
         let fuel = calculate_fuel_for(mass);
 
@@ -23,5 +23,11 @@ fn main() {
 }
 
 fn calculate_fuel_for(n: i32) -> i32 {
-    (n as f64 / 3.0_f64).trunc() as i32 - 2
+    let fuel_for_n = (n as f64 / 3.0_f64).trunc() as i32 - 2;
+
+    if fuel_for_n <= 0 {
+        return 0;
+    } else {
+        return fuel_for_n + calculate_fuel_for(fuel_for_n);
+    }
 }
