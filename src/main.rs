@@ -4,6 +4,11 @@ use std::io::{prelude::*, BufReader};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+
+    println!("{:?}", day_1_exercise_2(args));
+}
+
+fn day_1_exercise_2(args: Vec<String>) -> i32 {
     let filename = &args[1];
     let file = fs::File::open(filename).expect("Error reading file");
 
@@ -19,7 +24,7 @@ fn main() {
         total_fuel += fuel;
     }
 
-    println!("{:?}", total_fuel);
+    total_fuel
 }
 
 fn calculate_fuel_for(n: i32) -> i32 {
