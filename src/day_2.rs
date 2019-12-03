@@ -2,15 +2,7 @@ use std::fs;
 
 #[allow(dead_code)]
 pub fn exercise_1() {
-    let filename: &str = "input_day_02.txt";
-    let raw_program: String = fs::read_to_string(filename).expect("Error reading file");
-    let mut program: Vec<usize> = raw_program
-        .trim()
-        .split(',')
-        .into_iter()
-        .map(|n| n.parse::<usize>())
-        .filter_map(Result::ok)
-        .collect();
+    let mut program: Vec<usize> = get_program();
 
     // "before running the program, replace position 1 with the value 12
     // and replace position 2 with the value 2."
@@ -24,26 +16,16 @@ pub fn exercise_1() {
 
 #[allow(dead_code)]
 pub fn exercise_2() {
-    let filename: &str = "input_day_02.txt";
-    let raw_program: String = fs::read_to_string(filename).expect("Error reading file");
-    let program: Vec<usize> = raw_program
-        .trim()
-        .split(',')
-        .into_iter()
-        .map(|n| n.parse::<usize>())
-        .filter_map(Result::ok)
-        .collect();
-
-    let mut this_program: Vec<usize>;
+    let mut current_program: Vec<usize>;
     let mut final_program: Vec<usize> = vec![];
 
     'outer: for i in 0..100 {
         'inner: for j in 0..100 {
-            this_program = program.clone();
-            this_program[1] = i;
-            this_program[2] = j;
+            current_program = get_program();
+            current_program[1] = i;
+            current_program[2] = j;
 
-            final_program = run_program(this_program);
+            final_program = run_program(current_program);
             if final_program[0] == 19690720 {
                 break 'outer;
             }
@@ -54,6 +36,20 @@ pub fn exercise_2() {
         "[D2E2] 100 * noun + verb: {:?}{:?}",
         final_program[1], final_program[2]
     );
+}
+
+fn get_program() -> Vec<usize> {
+    let filename: &str = "input_day_02.txt";
+    let raw_program: String = fs::read_to_string(filename).expect("Error reading file");
+    let program: Vec<usize> = raw_program
+        .trim()
+        .split(',')
+        .into_iter()
+        .map(|n| n.parse::<usize>())
+        .filter_map(Result::ok)
+        .collect();
+
+    program
 }
 
 fn run_program(mut program: Vec<usize>) -> Vec<usize> {
