@@ -17,13 +17,19 @@ pub fn exercise_1() {
     program[1] = 12;
     program[2] = 2;
 
-    let program_length = program.len();
+    let final_program = run_program(program);
 
+    println!("[D2E1] value at position 0: {:?}", final_program[0]);
+}
+
+
+fn run_program(mut program: Vec<usize>) -> Vec<usize> {
     let mut i = 0;
     let mut opcode;
     let mut value_1;
     let mut value_2;
     let mut store_index;
+    let program_length = program.len();
 
     while i < program_length && program[i] != 99 {
         opcode = program[i];
@@ -46,5 +52,5 @@ pub fn exercise_1() {
         i += 4;
     }
 
-    println!("[D2E1] value at position 0: {:?}", program[0]);
+    program
 }
