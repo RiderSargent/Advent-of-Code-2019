@@ -21,10 +21,6 @@ pub fn exercise_1() {
     println!("[D1E1] Total fuel: {}", total_fuel);
 }
 
-fn calculate_fuel_for(n: i32) -> i32 {
-    (n as f64 / 3.0_f64).trunc() as i32 - 2
-}
-
 #[allow(dead_code)]
 pub fn exercise_2() {
     let filename = "input_day_01.txt";
@@ -43,6 +39,10 @@ pub fn exercise_2() {
     }
 
     println!("[D1E2] Total fuel: {}", total_fuel);
+}
+
+fn calculate_fuel_for(n: i32) -> i32 {
+    (n as f64 / 3.0_f64).trunc() as i32 - 2
 }
 
 fn recursively_calculate_fuel_for(n: i32) -> i32 {
