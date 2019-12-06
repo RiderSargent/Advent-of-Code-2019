@@ -1,7 +1,6 @@
 use std::fs;
 use std::io::{prelude::*, BufReader};
 
-#[allow(dead_code)]
 pub fn exercise_1() {
     let filename = "input_day_01.txt";
     let file = fs::File::open(filename).expect("Error reading file");
@@ -21,7 +20,6 @@ pub fn exercise_1() {
     println!("[D1E1] Total fuel: {}", total_fuel);
 }
 
-#[allow(dead_code)]
 pub fn exercise_2() {
     let filename = "input_day_01.txt";
     let file = fs::File::open(filename).expect("Error reading file");

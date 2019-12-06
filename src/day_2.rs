@@ -1,6 +1,5 @@
 use std::fs;
 
-#[allow(dead_code)]
 pub fn exercise_1() {
     let mut program: Vec<usize> = get_program();
 
@@ -14,7 +13,6 @@ pub fn exercise_1() {
     println!("[D2E1] value at position 0: {:?}", final_program[0]);
 }
 
-#[allow(dead_code)]
 pub fn exercise_2() {
     let mut current_program: Vec<usize>;
     let mut final_program: Vec<usize> = vec![];
