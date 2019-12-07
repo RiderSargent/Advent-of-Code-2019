@@ -20,30 +20,24 @@ pub fn exercise_1() {
         routes.push(route.to_owned());
     }
 
-    routes = vec![
-        vec!["R8".to_string(),"U5".to_string(),"L5".to_string(),"D3".to_string()],
-        vec!["U7".to_string(),"R6".to_string(),"D4".to_string(),"L4".to_string()],
-    ];
-
-    println!("{:?}", routes[0]);
-    println!("{:?}\n", routes[1]);
-
     let r1_points = get_points(routes[0].to_owned());
     let r2_points = get_points(routes[1].to_owned());
 
-    println!("{:?}", r1_points);
-    println!("{:?}\n", r2_points);
-
     let intersection = r1_points.intersection(&r2_points);
 
-    println!("Intersection: {:?}", intersection);
+    let mut min_distance: u32 = std::u32::MAX;
+    // let mut closest: (&i32, &i32) = (&0, &0);
+    for (i, j) in intersection {
+        if i != &0 || j != &0 {
+            let current_distance = manhattan_distance((i, j)); 
+            if current_distance < min_distance {
+                min_distance = current_distance;
+                // closest = (i, j);
+            }
+        }
+    }
 
-    let manhattan_distances: Vec<i32> = intersection.map(|(i, j)| manhattan_distance((i, j))).collect();
-
-    println!("manhattan_distances: {:?}", manhattan_distances);
-
-    println!("sorted intersection: {:?}", intersection.collect::<Vec<(i32, i32)>>().sort_by(|a, b| manhattan_distance(a) < manhattan_distance(b)));
-    // println!("[D3E1] routes: {:?}", routes);
+    println!("[D3E1] distance: {:?}", min_distance);
 }
 
 fn get_points(route: Vec<String>) -> HashSet<(i32, i32)> {
@@ -83,8 +77,8 @@ fn get_points(route: Vec<String>) -> HashSet<(i32, i32)> {
     HashSet::from_iter(points.iter().cloned())
 }
 
-fn manhattan_distance(point: (&i32, &i32)) -> i32 {
+fn manhattan_distance(point: (&i32, &i32)) -> u32 {
     let (r, c) = point;
 
-    r.abs() + c.abs()
+    (r.abs() + c.abs()) as u32
 }
