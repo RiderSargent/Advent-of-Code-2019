@@ -1,7 +1,7 @@
 use std::collections::HashSet;
-use std::iter::FromIterator;
 use std::fs;
 use std::io::{prelude::*, BufReader};
+use std::iter::FromIterator;
 
 pub fn exercise_1() {
     let filename = "input_day_03.txt";
@@ -26,13 +26,10 @@ pub fn exercise_1() {
     let intersection = r1_points.intersection(&r2_points);
 
     let mut min_distance: u32 = std::u32::MAX;
-    // let mut closest: (&i32, &i32) = (&0, &0);
-    for (i, j) in intersection {
-        if i != &0 || j != &0 {
-            let current_distance = manhattan_distance((i, j)); 
-            if current_distance < min_distance {
-                min_distance = current_distance;
-                // closest = (i, j);
+    for p in intersection {
+        if p.row != 0 || p.col != 0 {
+            if p.distance < min_distance {
+                min_distance = p.distance;
             }
         }
     }
@@ -40,34 +37,56 @@ pub fn exercise_1() {
     println!("[D3E1] distance: {:?}", min_distance);
 }
 
-fn get_points(route: Vec<String>) -> HashSet<(i32, i32)> {
-    let mut points: Vec<(i32, i32)> = vec![(0, 0)];
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+struct Point {
+    row: i32,
+    col: i32,
+    distance: u32,
+}
+
+impl Point {
+    pub fn new(r: i32, c: i32) -> Self {
+        Point { 
+            row: r, 
+            col: c,
+            distance: (r.abs() + c.abs()) as u32,
+        }
+    }
+}
+
+fn get_points(route: Vec<String>) -> HashSet<Point> {
+    let mut points: Vec<Point> = vec![Point::new(0, 0)];
 
     for line in route {
         let chars: Vec<char> = line.chars().collect();
-        let direction = chars.first().unwrap();
-        let distance: i32 = chars[1..].to_owned().into_iter().collect::<String>().parse::<i32>().unwrap();
-        let (r, c) = *points.last().unwrap();
+        let direction: &char = chars.first().unwrap();
+        let distance: i32 = chars[1..]
+            .to_owned()
+            .into_iter()
+            .collect::<String>()
+            .parse::<i32>()
+            .unwrap();
+        let prev: Point = *points.last().unwrap();
 
         match direction {
             'U' => {
                 for i in 1..=distance {
-                    points.push((r - i, c.to_owned()));
+                    points.push(Point::new(prev.row - i, prev.col.to_owned()));
                 }
             }
             'D' => {
                 for i in 1..=distance {
-                    points.push((r + i, c.to_owned()));
+                    points.push(Point::new(prev.row + i, prev.col.to_owned()));
                 }
             }
             'L' => {
                 for i in 1..=distance {
-                    points.push((r.to_owned(), c - i));
+                    points.push(Point::new(prev.row.to_owned(), prev.col - i));
                 }
             }
             'R' => {
                 for i in 1..=distance {
-                    points.push((r.to_owned(), c + i));
+                    points.push(Point::new(prev.row.to_owned(), prev.col + i));
                 }
             }
             _ => panic!("Bad data: Illegal direction."),
@@ -75,10 +94,4 @@ fn get_points(route: Vec<String>) -> HashSet<(i32, i32)> {
     }
 
     HashSet::from_iter(points.iter().cloned())
-}
-
-fn manhattan_distance(point: (&i32, &i32)) -> u32 {
-    let (r, c) = point;
-
-    (r.abs() + c.abs()) as u32
 }

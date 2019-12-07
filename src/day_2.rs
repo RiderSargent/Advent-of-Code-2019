@@ -10,7 +10,7 @@ pub fn exercise_1() {
 
     let final_program = run_program(program);
 
-    println!("[D2E1] value at position 0: {:?}", final_program[0]);
+    println!("[D2E1] Value at position 0: {:?}", final_program[0]);
 }
 
 pub fn exercise_2() {
