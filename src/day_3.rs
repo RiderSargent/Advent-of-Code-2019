@@ -23,9 +23,14 @@ pub fn exercise_1() {
     let r1_points = get_points(routes[0].to_owned());
     let r2_points = get_points(routes[1].to_owned());
 
+    // println!("r1_points: {:?}", r1_points);
+    // println!("r2_points: {:?}", r2_points);
+
     let intersection = r1_points.intersection(&r2_points);
 
-    let mut min_distance: u32 = std::u32::MAX;
+    println!("intersection: {:?}", intersection);
+
+    let mut min_distance: i32 = std::i32::MAX;
     for p in intersection {
         if p.row != 0 || p.col != 0 {
             if p.distance < min_distance {
@@ -37,25 +42,8 @@ pub fn exercise_1() {
     println!("[D3E1] distance: {:?}", min_distance);
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-struct Point {
-    row: i32,
-    col: i32,
-    distance: u32,
-}
-
-impl Point {
-    pub fn new(r: i32, c: i32) -> Self {
-        Point { 
-            row: r, 
-            col: c,
-            distance: (r.abs() + c.abs()) as u32,
-        }
-    }
-}
-
 fn get_points(route: Vec<String>) -> HashSet<Point> {
-    let mut points: Vec<Point> = vec![Point::new(0, 0)];
+    let mut points: Vec<Point> = vec![Point::new(0, 0, 0)];
 
     for line in route {
         let chars: Vec<char> = line.chars().collect();
@@ -71,22 +59,38 @@ fn get_points(route: Vec<String>) -> HashSet<Point> {
         match direction {
             'U' => {
                 for i in 1..=distance {
-                    points.push(Point::new(prev.row - i, prev.col.to_owned()));
+                    points.push(Point::new(
+                        prev.row - i,
+                        prev.col.to_owned(),
+                        prev.path_length + i,
+                    ));
                 }
             }
             'D' => {
                 for i in 1..=distance {
-                    points.push(Point::new(prev.row + i, prev.col.to_owned()));
+                    points.push(Point::new(
+                        prev.row + i,
+                        prev.col.to_owned(),
+                        prev.path_length + i,
+                    ));
                 }
             }
             'L' => {
                 for i in 1..=distance {
-                    points.push(Point::new(prev.row.to_owned(), prev.col - i));
+                    points.push(Point::new(
+                        prev.row.to_owned(),
+                        prev.col - i,
+                        prev.path_length + i,
+                    ));
                 }
             }
             'R' => {
                 for i in 1..=distance {
-                    points.push(Point::new(prev.row.to_owned(), prev.col + i));
+                    points.push(Point::new(
+                        prev.row.to_owned(),
+                        prev.col + i,
+                        prev.path_length + i,
+                    ));
                 }
             }
             _ => panic!("Bad data: Illegal direction."),
@@ -95,3 +99,31 @@ fn get_points(route: Vec<String>) -> HashSet<Point> {
 
     HashSet::from_iter(points.iter().cloned())
 }
+
+#[derive(Clone, Copy, Debug, Hash)]
+struct Point {
+    row: i32,
+    col: i32,
+    distance: i32,
+    path_length: i32,
+}
+
+impl Point {
+    pub fn new(row: i32, col: i32, path_length: i32) -> Self {
+        Point {
+            row: row,
+            col: col,
+            distance: row.abs() + col.abs(),
+            path_length: path_length,
+        }
+    }
+}
+
+impl PartialEq for Point {
+    fn eq(&self, other: &Self) -> bool {
+        self.row == other.row && self.col == other.col
+    }
+}
+
+impl Eq for Point {}
+
