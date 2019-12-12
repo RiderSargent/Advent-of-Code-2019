@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use std::fs;
-use std::hash::{Hash, Hasher};
+use std::hash::{Hash};
 use std::io::{prelude::*, BufReader};
 use std::iter::FromIterator;
 
@@ -21,12 +21,12 @@ pub fn exercise_1() {
         routes.push(route.to_owned());
     }
 
-    // distance: 6 -> to (-3, 3)
-    // path length: 30 -> to (-5, 6)
-    routes = vec![
-        vec!["R8", "U5", "L5", "D3"].into_iter().map(|d| d.to_string()).collect(),
-        vec!["U7", "R6", "D4", "L4"].into_iter().map(|d| d.to_string()).collect(),
-    ];
+    // // distance: 6 -> to (-3, 3)
+    // // path length: 30 -> to (-5, 6)
+    // routes = vec![
+    //     vec!["R8", "U5", "L5", "D3"].into_iter().map(|d| d.to_string()).collect(),
+    //     vec!["U7", "R6", "D4", "L4"].into_iter().map(|d| d.to_string()).collect(),
+    // ];
 
     // // distance: 159
     // // path length: 610
@@ -42,45 +42,66 @@ pub fn exercise_1() {
     //     vec!["U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"].into_iter().map(|d| d.to_string()).collect(),
     // ];
 
-    let r1_points: Vec<(i32, i32)> = get_points(routes[0].to_owned());
-    let r2_points: Vec<(i32, i32)> = get_points(routes[1].to_owned());
+    let r1_points: Vec<Point> = get_points(routes[0].to_owned());
+    let r2_points: Vec<Point> = get_points(routes[1].to_owned());
 
     print_points("r1_points", &r1_points);
     print_points("r2_points", &r2_points);
 
-    // Need to clone points iter into HashSet
-    // HashSet::from_iter(points.iter().cloned())
+    // as sets
+    let r1_points_set: HashSet<Point> = HashSet::from_iter(r1_points.iter().cloned());
+    let r2_points_set: HashSet<Point> = HashSet::from_iter(r2_points.iter().cloned());
 
-    // let intersection = r1_points.intersection(&r2_points);
+    println!(
+        "\nintersection:\n  {:?}",
+        r1_points_set.intersection(&r2_points_set)
+    );
 
-    // let min_distance: i32 = std::i32::MAX;
+    let intersection = r1_points_set.intersection(&r2_points_set);
 
-    // let mut l1: usize;
-    // let mut l2: usize;
-    // let mut min_path_length: usize = std::usize::MAX;
+    let mut min_distance: i32 = std::i32::MAX;
 
-    // println!("\nintersection:");
-    // for p in intersection {
-    //     if p.row != 0 || p.col != 0 {
-    //         // println!("  {:?}", p);
-    //         // if p.distance < min_distance {
-    //         //     min_distance = p.distance;
-    //         // }
-    //         l1 = r1_points.into_iter().position(|q| q.row == p.row && q.col == p.col).unwrap();
-    //         l2 = r2_points.into_iter().position(|q| q.row == p.row && q.col == p.col).unwrap();
-    //         let combined_path_length = l1 + l2;
-    //         if combined_path_length < min_path_length {
-    //             min_path_length = combined_path_length;
-    //         }
-    //     }
-    // }
-    // println!("");
+    let mut l1: usize;
+    let mut l2: usize;
+    let mut min_path_length: usize = std::usize::MAX;
 
-    // println!("[D3E1] distance: {:?}", min_distance);
+    for Point { x: r, y: c } in intersection {
+        if r != &0 || c != &0 {
+            let p_distance = r.abs() + c.abs();
+            if p_distance < min_distance {
+                min_distance = p_distance;
+            }
+
+            l1 = r1_points
+                .clone()
+                .into_iter()
+                .position(|Point { x: a, y: b }| a == *r && b == *c)
+                .unwrap();
+            l2 = r2_points
+                .clone()
+                .into_iter()
+                .position(|Point { x: a, y: b }| a == *r && b == *c)
+                .unwrap();
+            let combined_path_length = l1 + l2;
+            if combined_path_length < min_path_length {
+                min_path_length = combined_path_length;
+            }
+        }
+    }
+    println!("");
+
+    println!("[D3E1] distance: {:?}", min_distance);
+    println!("[D3E2] min_path_length: {:?}", min_path_length);
 }
 
-fn get_points(route: Vec<String>) -> Vec<(i32, i32)> {
-    let mut points: Vec<(i32, i32)> = vec![(0, 0)];
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn get_points(route: Vec<String>) -> Vec<Point> {
+    let mut points: Vec<Point> = vec![Point { x: 0, y: 0 }];
 
     for line in route {
         let chars: Vec<char> = line.chars().collect();
@@ -91,27 +112,27 @@ fn get_points(route: Vec<String>) -> Vec<(i32, i32)> {
             .collect::<String>()
             .parse::<i32>()
             .unwrap();
-        let (r, c) = *points.last().unwrap();
+        let Point { x: r, y: c } = *points.last().unwrap();
 
         match direction {
             'U' => {
                 for i in 1..=distance {
-                    points.push((r - i, c));
+                    points.push(Point { x: r - i, y: c });
                 }
             }
             'D' => {
                 for i in 1..=distance {
-                    points.push((r + i, c));
+                    points.push(Point { x: r + i, y: c });
                 }
             }
             'L' => {
                 for i in 1..=distance {
-                    points.push((r, c - i,));
+                    points.push(Point { x: r, y: c - i });
                 }
             }
             'R' => {
                 for i in 1..=distance {
-                    points.push((r, c + i));
+                    points.push(Point { x: r, y: c + i });
                 }
             }
             _ => panic!("Bad data: Illegal direction."),
@@ -121,7 +142,7 @@ fn get_points(route: Vec<String>) -> Vec<(i32, i32)> {
     points
 }
 
-fn print_points(name: &str, points: &Vec<(i32, i32)>) {
+fn print_points(name: &str, points: &Vec<Point>) {
     println!("\n{}:", name);
     for i in 0..points.len() {
         println!("{:2}:  {:?}", i, points[i]);
