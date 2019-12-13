@@ -1,13 +1,79 @@
 use std::collections::HashSet;
 use std::fs;
-use std::hash::{Hash};
+use std::hash::Hash;
 use std::io::{prelude::*, BufReader};
 use std::iter::FromIterator;
 
 pub fn exercise_1() {
+    let routes: Vec<Vec<String>> = get_routes();
+
+    let r1_points: Vec<Point> = get_points(routes[0].to_owned());
+    let r2_points: Vec<Point> = get_points(routes[1].to_owned());
+
+    let r1_points_set: HashSet<Point> = HashSet::from_iter(r1_points.iter().cloned());
+    let r2_points_set: HashSet<Point> = HashSet::from_iter(r2_points.iter().cloned());
+
+    let intersection = r1_points_set.intersection(&r2_points_set);
+
+    let mut min_distance: i32 = std::i32::MAX;
+
+    for Point { x: r, y: c } in intersection.clone() {
+        if r != &0 || c != &0 {
+            let p_distance = r.abs() + c.abs();
+            if p_distance < min_distance {
+                min_distance = p_distance;
+            }
+        }
+    }
+    println!("[D3E1] distance: {:?}", min_distance);
+}
+
+pub fn exercise_2() {
+    let routes: Vec<Vec<String>> = get_routes();
+
+    let r1_points: Vec<Point> = get_points(routes[0].to_owned());
+    let r2_points: Vec<Point> = get_points(routes[1].to_owned());
+
+    let r1_points_set: HashSet<Point> = HashSet::from_iter(r1_points.iter().cloned());
+    let r2_points_set: HashSet<Point> = HashSet::from_iter(r2_points.iter().cloned());
+
+    let intersection = r1_points_set.intersection(&r2_points_set);
+
+    let mut l1: usize;
+    let mut l2: usize;
+    let mut min_path_length: usize = std::usize::MAX;
+
+    for Point { x: r, y: c } in intersection.clone() {
+        if r != &0 || c != &0 {
+            l1 = r1_points
+                .clone()
+                .into_iter()
+                .position(|Point { x: a, y: b }| a == *r && b == *c)
+                .unwrap();
+            l2 = r2_points
+                .clone()
+                .into_iter()
+                .position(|Point { x: a, y: b }| a == *r && b == *c)
+                .unwrap();
+            let combined_path_length = l1 + l2;
+            if combined_path_length < min_path_length {
+                min_path_length = combined_path_length;
+            }
+        }
+    }
+    println!("[D3E2] min_path_length: {:?}", min_path_length);
+}
+
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn get_routes() -> Vec<Vec<String>> {
+    let mut routes: Vec<Vec<String>> = vec![];
     let filename = "input_day_03.txt";
     let file = fs::File::open(filename).expect("Error reading file");
-    let mut routes: Vec<Vec<String>> = vec![];
 
     let reader = BufReader::new(file);
     for line in reader.lines() {
@@ -21,6 +87,7 @@ pub fn exercise_1() {
         routes.push(route.to_owned());
     }
 
+    // --- Testing -------------------------------------------------------------
     // // distance: 6 -> to (-3, 3)
     // // path length: 30 -> to (-5, 6)
     // routes = vec![
@@ -42,62 +109,7 @@ pub fn exercise_1() {
     //     vec!["U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"].into_iter().map(|d| d.to_string()).collect(),
     // ];
 
-    let r1_points: Vec<Point> = get_points(routes[0].to_owned());
-    let r2_points: Vec<Point> = get_points(routes[1].to_owned());
-
-    print_points("r1_points", &r1_points);
-    print_points("r2_points", &r2_points);
-
-    // as sets
-    let r1_points_set: HashSet<Point> = HashSet::from_iter(r1_points.iter().cloned());
-    let r2_points_set: HashSet<Point> = HashSet::from_iter(r2_points.iter().cloned());
-
-    println!(
-        "\nintersection:\n  {:?}",
-        r1_points_set.intersection(&r2_points_set)
-    );
-
-    let intersection = r1_points_set.intersection(&r2_points_set);
-
-    let mut min_distance: i32 = std::i32::MAX;
-
-    let mut l1: usize;
-    let mut l2: usize;
-    let mut min_path_length: usize = std::usize::MAX;
-
-    for Point { x: r, y: c } in intersection {
-        if r != &0 || c != &0 {
-            let p_distance = r.abs() + c.abs();
-            if p_distance < min_distance {
-                min_distance = p_distance;
-            }
-
-            l1 = r1_points
-                .clone()
-                .into_iter()
-                .position(|Point { x: a, y: b }| a == *r && b == *c)
-                .unwrap();
-            l2 = r2_points
-                .clone()
-                .into_iter()
-                .position(|Point { x: a, y: b }| a == *r && b == *c)
-                .unwrap();
-            let combined_path_length = l1 + l2;
-            if combined_path_length < min_path_length {
-                min_path_length = combined_path_length;
-            }
-        }
-    }
-    println!("");
-
-    println!("[D3E1] distance: {:?}", min_distance);
-    println!("[D3E2] min_path_length: {:?}", min_path_length);
-}
-
-#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
-struct Point {
-    x: i32,
-    y: i32,
+    routes
 }
 
 fn get_points(route: Vec<String>) -> Vec<Point> {
