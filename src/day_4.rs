@@ -1,9 +1,15 @@
 pub fn exercise_1() {
-    println!("[D4E1] number of potential passwords: {}", get_candidates_1(134792, 675810).len());
+    println!(
+        "[D4E1] number of potential passwords: {}",
+        get_candidates_1(134792, 675810).len()
+    );
 }
 
 pub fn exercise_2() {
-    println!("[D4E2] number of potential passwords: {}", get_candidates_2(134792, 675810).len());
+    println!(
+        "[D4E2] number of potential passwords: {}",
+        get_candidates_2(134792, 675810).len()
+    );
 }
 
 // TODO: parameterize the filter function
@@ -46,7 +52,7 @@ fn password_filter_1(pw: &u32) -> bool {
     // check doubles
     let mut has_double: bool = false;
     for i in 0..5 {
-        if digits[i] == digits[i+1] {
+        if digits[i] == digits[i + 1] {
             has_double = true;
             break;
         }
