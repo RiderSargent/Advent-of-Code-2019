@@ -21,6 +21,7 @@ fn get_candidates_1(start: u32, end: u32) -> Vec<u32> {
 }
 
 fn password_filter_1(pw: &u32) -> bool {
+    // TODO: extract digitization function
     // --- string digitization ---
     // let digits: Vec<u32> = n
     //     .to_owned()
