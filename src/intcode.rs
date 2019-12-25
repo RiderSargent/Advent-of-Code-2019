@@ -1,6 +1,4 @@
 use std::fs;
-use std::io;
-use std::io::prelude::*;
 
 pub fn load_program(filename: &str) -> Vec<i32> {
     let raw_program: String = fs::read_to_string(filename).expect("Error reading file");
@@ -15,7 +13,11 @@ pub fn load_program(filename: &str) -> Vec<i32> {
     program
 }
 
-pub fn run_program(mut program: Vec<i32>) -> Vec<i32> {
+pub fn run_program(program: Vec<i32>) -> Vec<i32> {
+    run_program_interactive(vec![], program)
+}
+
+pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Vec<i32> {
     let mut i = 0;
     let program_length = program.len();
 
@@ -110,13 +112,10 @@ pub fn run_program(mut program: Vec<i32>) -> Vec<i32> {
                 // instruction 3,50 would take an input value and store it at
                 // address 50.
                 let i_1: usize = program[i + 1] as usize;
-                let mut input = String::new();
 
-                print!("Input: ");
-                io::stdout().flush().unwrap();
-                match io::stdin().read_line(&mut input) {
-                    Ok(_) => {
-                        match input.trim().parse::<i32>() {
+                match input.pop() {
+                    Some(foo) => {
+                        match foo.to_string().parse::<i32>() {
                             Ok(value) => {
                                 program[i_1] = value;
                             }
@@ -125,8 +124,8 @@ pub fn run_program(mut program: Vec<i32>) -> Vec<i32> {
                             }
                         }
                     }
-                    Err(error) => {
-                        println!("Error: {}", error);
+                    None => {
+                        println!("Error: Missing input.");
                     }
                 }
                 offset = 2;
