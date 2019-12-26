@@ -25,9 +25,6 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
         let mut full_opcode: Vec<i32> = digitize(&program[i]);
         let opcode: i32;
         let mut parameter_modes: Vec<i32>;
-        let offset: usize;
-
-        // println!("program[i]: {:?}", program[i]);
 
         // set opcode and parameter modes
         if program[i] < 100 {
@@ -37,8 +34,6 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
             opcode = full_opcode.pop().unwrap() + full_opcode.pop().unwrap() * 10;
             parameter_modes = full_opcode;
         }
-
-        // println!("parameter_modes: {:?}", parameter_modes);
 
         match opcode {
             01 => {
@@ -54,7 +49,7 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                     Some(1) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error")
+                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -65,14 +60,15 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                     Some(1) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error")
+                    _ => panic!("Error"),
                 }
 
                 let store_index: usize = program[i + 3] as usize;
 
                 program[store_index] = value_1 + value_2;
-                offset = 4;
+                i += 4;
             }
+
             02 => {
                 // MULTIPLY - opcode, read 1 index, read 2 index, write index
                 let value_1;
@@ -86,7 +82,7 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                     Some(1) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error")
+                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -97,14 +93,15 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                     Some(1) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error")
+                    _ => panic!("Error"),
                 }
 
                 let store_index: usize = program[i + 3] as usize;
 
                 program[store_index] = value_1 * value_2;
-                offset = 4;
+                i += 4;
             }
+
             03 => {
                 // INPUT - opcode, write index
                 // Opcode 3 takes a single integer as input and saves it to the
@@ -114,22 +111,21 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                 let i_1: usize = program[i + 1] as usize;
 
                 match input.pop() {
-                    Some(foo) => {
-                        match foo.to_string().parse::<i32>() {
-                            Ok(value) => {
-                                program[i_1] = value;
-                            }
-                            Err(error) => {
-                                println!("Error: {}", error);
-                            }
+                    Some(foo) => match foo.to_string().parse::<i32>() {
+                        Ok(value) => {
+                            program[i_1] = value;
                         }
-                    }
+                        Err(error) => {
+                            println!("Error: {}", error);
+                        }
+                    },
                     None => {
                         println!("Error: Missing input.");
                     }
                 }
-                offset = 2;
+                i += 2;
             }
+
             04 => {
                 // OUTPUT - opcode, read index
                 // Opcode 4 outputs the value of its only parameter. For
@@ -145,18 +141,169 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                     Some(1) => {
                         value = program[i + 1];
                     }
-                    _ => panic!("Error")
+                    _ => panic!("Error"),
                 }
 
                 println!("Output: {}", value);
-                offset = 2;
+                i += 2;
             }
+
+            05 => {
+                // Jump-if-true: if the first parameter is non-zero, it
+                // sets the instruction pointer to the value from the second
+                // parameter. Otherwise, it does nothing.
+                let value_1: i32;
+                let value_2: i32;
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_1: usize = program[i + 1] as usize;
+                        value_1 = program[i_1];
+                    }
+                    Some(1) => {
+                        value_1 = program[i + 1];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_2: usize = program[i + 2] as usize;
+                        value_2 = program[i_2];
+                    }
+                    Some(1) => {
+                        value_2 = program[i + 2];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                if value_1 != 0 {
+                    i = value_2 as usize;
+                } else {
+                    i += 3;
+                }
+            }
+
+            06 => {
+                // Jump-if-false: if the first parameter is zero, it
+                // sets the instruction pointer to the value from the second
+                // parameter. Otherwise, it does nothing.
+                let value_1: i32;
+                let value_2: i32;
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_1: usize = program[i + 1] as usize;
+                        value_1 = program[i_1];
+                    }
+                    Some(1) => {
+                        value_1 = program[i + 1];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_2: usize = program[i + 2] as usize;
+                        value_2 = program[i_2];
+                    }
+                    Some(1) => {
+                        value_2 = program[i + 2];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                if value_1 == 0 {
+                    i = value_2 as usize;
+                } else {
+                    i += 3;
+                }
+            }
+
+            07 => {
+                // Less than: if the first parameter is less than the
+                // second parameter, it stores 1 in the position given by the
+                // third parameter. Otherwise, it stores 0.
+                let value_1: i32;
+                let value_2: i32;
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_1: usize = program[i + 1] as usize;
+                        value_1 = program[i_1];
+                    }
+                    Some(1) => {
+                        value_1 = program[i + 1];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_2: usize = program[i + 2] as usize;
+                        value_2 = program[i_2];
+                    }
+                    Some(1) => {
+                        value_2 = program[i + 2];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                let store_index: usize = program[i + 3] as usize;
+
+                if value_1 < value_2 {
+                    program[store_index] = 1;
+                } else {
+                    program[store_index] = 0;
+                }
+                i += 4;
+            }
+
+            08 => {
+                // Equals: if the first parameter is equal to the second
+                // parameter, it stores 1 in the position given by the third
+                // parameter. Otherwise, it stores 0.
+                let value_1: i32;
+                let value_2: i32;
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_1: usize = program[i + 1] as usize;
+                        value_1 = program[i_1];
+                    }
+                    Some(1) => {
+                        value_1 = program[i + 1];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                match parameter_modes.pop() {
+                    None | Some(0) => {
+                        let i_2: usize = program[i + 2] as usize;
+                        value_2 = program[i_2];
+                    }
+                    Some(1) => {
+                        value_2 = program[i + 2];
+                    }
+                    _ => panic!("Error"),
+                }
+
+                let store_index: usize = program[i + 3] as usize;
+
+                if value_1 == value_2 {
+                    program[store_index] = 1;
+                } else {
+                    program[store_index] = 0;
+                }
+                i += 4;
+            }
+
             99 => {
                 break;
             }
+
             _ => panic!("Error"),
         }
-        i += offset;
     }
 
     program

@@ -15,6 +15,6 @@ fn main() {
     // day_3::exercise_2();
     // day_4::exercise_1();
     // day_4::exercise_2();
-    day_5::exercise_1();
-    // day_5::exercise_2();
+    // day_5::exercise_1();
+    day_5::exercise_2();
 }
