@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fs;
 use std::io::{prelude::*, BufReader};
 
@@ -6,30 +7,51 @@ pub fn exercise_1() {
     let objects: HashMap<String, Option<String>> = load_input("input_day_06.txt");
     let mut count: u32 = 0;
 
-    // let mut objects: HashMap<String, Option<String>> = HashMap::new();
-    // objects.insert("B".to_string(), Some("COM".to_string()));
-    // objects.insert("C".to_string(), Some("B".to_string()));
-    // objects.insert("D".to_string(), Some("C".to_string()));
-    // objects.insert("E".to_string(), Some("D".to_string()));
-    // objects.insert("F".to_string(), Some("E".to_string()));
-    // objects.insert("G".to_string(), Some("B".to_string()));
-    // objects.insert("H".to_string(), Some("G".to_string()));
-    // objects.insert("I".to_string(), Some("D".to_string()));
-    // objects.insert("J".to_string(), Some("E".to_string()));
-    // objects.insert("K".to_string(), Some("J".to_string()));
-    // objects.insert("L".to_string(), Some("K".to_string()));
-    // above graph has 42 orbits
-
     for (object, _orbits) in &objects {
         count += count_orbits(&objects, object.to_string());
     }
 
     // should be 294191
-    println!("Number of orbits: {}", count);
+    println!("[D6E1] Number of orbits: {}", count);
+}
+
+pub fn exercise_2() {
+    let objects: HashMap<String, Option<String>> = load_input("input_day_06.txt");
+
+    let my_parents: HashSet<_> = get_parents(&objects, "YOU".to_string())
+        .iter()
+        .cloned()
+        .collect();
+    let santa_parents: HashSet<_> = get_parents(&objects, "SAN".to_string())
+        .iter()
+        .cloned()
+        .collect();
+
+    // should be 424
+    println!(
+        "[D6E2] shortest orbital transfer path length: {:?}",
+        my_parents
+            .symmetric_difference(&santa_parents)
+            .collect::<HashSet<_>>()
+            .len()
+    );
+}
+
+fn get_parents(objects: &HashMap<String, Option<String>>, current_object: String) -> Vec<String> {
+    match objects.get(&current_object) {
+        None => vec![],
+        Some(optional_obj) => match optional_obj {
+            None => vec![],
+            Some(parent_obj) => [
+                get_parents(objects, parent_obj.to_string()),
+                vec![parent_obj.to_string()],
+            ]
+            .concat(),
+        },
+    }
 }
 
 fn count_orbits(objects: &HashMap<String, Option<String>>, current_object: String) -> u32 {
-    // println!("{:?} orbits {:?}", current_object, objects.get(&current_object).unwrap());
     match objects.get(&current_object) {
         None => return 0,
         Some(optional_obj) => match optional_obj {
