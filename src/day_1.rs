@@ -17,6 +17,7 @@ pub fn exercise_1() {
         total_fuel += fuel;
     }
 
+    // should be 3303995
     println!("[D1E1] Total fuel: {}", total_fuel);
 }
 
@@ -36,6 +37,7 @@ pub fn exercise_2() {
         total_fuel += fuel;
     }
 
+    // should be 4953118
     println!("[D1E2] Total fuel: {}", total_fuel);
 }
 

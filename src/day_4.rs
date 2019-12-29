@@ -1,4 +1,5 @@
 pub fn exercise_1() {
+    // should be 1955
     println!(
         "[D4E1] number of potential passwords: {}",
         get_candidates_1(134792, 675810).len()
@@ -6,6 +7,7 @@ pub fn exercise_1() {
 }
 
 pub fn exercise_2() {
+    // should be 1319
     println!(
         "[D4E2] number of potential passwords: {}",
         get_candidates_2(134792, 675810).len()

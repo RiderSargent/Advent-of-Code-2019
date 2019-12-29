@@ -154,7 +154,7 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                     _ => panic!("Error"),
                 }
 
-                println!("Output: {}", value);
+                println!("  Output: {}", value);
                 i += 2;
             }
 

@@ -25,6 +25,7 @@ pub fn exercise_1() {
             }
         }
     }
+    // should be 248
     println!("[D3E1] distance: {:?}", min_distance);
 }
 
@@ -61,6 +62,7 @@ pub fn exercise_2() {
             }
         }
     }
+    // should be 28580
     println!("[D3E2] min_path_length: {:?}", min_path_length);
 }
 
@@ -152,11 +154,4 @@ fn get_points(route: Vec<String>) -> Vec<Point> {
     }
 
     points
-}
-
-fn print_points(name: &str, points: &Vec<Point>) {
-    println!("\n{}:", name);
-    for i in 0..points.len() {
-        println!("{:2}:  {:?}", i, points[i]);
-    }
 }
