@@ -1,5 +1,4 @@
 #[cfg(test)]
-
 use super::*;
 
 #[test]
@@ -44,7 +43,10 @@ fn test_d4e2() {
 
 #[test]
 fn test_d5e1() {
-    assert_eq!(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 8332629], day_5::exercise_1());
+    assert_eq!(
+        vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 8332629],
+        day_5::exercise_1()
+    );
 }
 
 #[test]
@@ -60,4 +62,9 @@ fn test_d6e1() {
 #[test]
 fn test_d6e2() {
     assert_eq!(424, day_6::exercise_2());
+}
+
+#[test]
+fn test_d7e1() {
+    assert_eq!(24625, day_7::exercise_1());
 }
