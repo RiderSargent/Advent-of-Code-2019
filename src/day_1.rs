@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::{prelude::*, BufReader};
 
-pub fn exercise_1() {
+pub fn exercise_1() -> i32 {
     let filename = "input_day_01.txt";
     let file = fs::File::open(filename).expect("Error reading file");
 
@@ -17,11 +17,10 @@ pub fn exercise_1() {
         total_fuel += fuel;
     }
 
-    // should be 3303995
-    println!("[D1E1] Total fuel: {}", total_fuel);
+    total_fuel
 }
 
-pub fn exercise_2() {
+pub fn exercise_2() -> i32 {
     let filename = "input_day_01.txt";
     let file = fs::File::open(filename).expect("Error reading file");
 
@@ -37,8 +36,7 @@ pub fn exercise_2() {
         total_fuel += fuel;
     }
 
-    // should be 4953118
-    println!("[D1E2] Total fuel: {}", total_fuel);
+    total_fuel
 }
 
 fn calculate_fuel_for(n: i32) -> i32 {
