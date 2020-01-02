@@ -8,7 +8,9 @@ pub fn exercise_1() -> i32 {
     program[1] = 12;
     program[2] = 2;
 
-    intcode::run_program(vec![], program)[0]
+    let final_program = intcode::run_program(vec![], program).0;
+
+    final_program[0]
 }
 
 pub fn exercise_2() -> i32 {
@@ -21,7 +23,7 @@ pub fn exercise_2() -> i32 {
             current_program[1] = i;
             current_program[2] = j;
 
-            final_program = intcode::run_program(vec![], current_program);
+            final_program = intcode::run_program(vec![], current_program).0;
             if final_program[0] == 19690720 {
                 break 'outer;
             }

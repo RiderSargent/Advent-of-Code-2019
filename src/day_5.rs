@@ -1,17 +1,13 @@
 use crate::intcode;
 
-pub fn exercise_1() {
+pub fn exercise_1() -> Vec<i32> {
     let program = intcode::load_program("input_day_05.txt");
 
-    // should be 8332629 (preceeded by 9 output 0s)
-    println!("[D5E1]");
-    intcode::run_program(vec![1], program);
+    intcode::run_program(vec![1], program).1
 }
 
-pub fn exercise_2() {
+pub fn exercise_2() -> Vec<i32> {
     let program = intcode::load_program("input_day_05.txt");
 
-    // should be 8805067
-    println!("[D5E2]");
-    intcode::run_program(vec![5], program);
+    intcode::run_program(vec![5], program).1
 }
