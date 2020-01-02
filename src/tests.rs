@@ -42,17 +42,15 @@ fn test_d4e2() {
     assert_eq!(1319, day_4::exercise_2());
 }
 
-// #[ignore]
-// #[test]
-// fn test_d5e1() {
-//     assert_eq!(1319, day_5::exercise_1());
-// }
+#[test]
+fn test_d5e1() {
+    assert_eq!(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 8332629], day_5::exercise_1());
+}
 
-// #[ignore]
-// #[test]
-// fn test_d5e2() {
-//     assert_eq!(1319, day_5::exercise_2());
-// }
+#[test]
+fn test_d5e2() {
+    assert_eq!(vec![8805067], day_5::exercise_2());
+}
 
 #[test]
 fn test_d6e1() {
