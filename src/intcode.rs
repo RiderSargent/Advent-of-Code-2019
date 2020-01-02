@@ -13,11 +13,7 @@ pub fn load_program(filename: &str) -> Vec<i32> {
     program
 }
 
-pub fn run_program(program: Vec<i32>) -> Vec<i32> {
-    run_program_interactive(vec![], program)
-}
-
-pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Vec<i32> {
+pub fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> Vec<i32> {
     // 01 - ADD (opcode, p1, p2, write_index)
     // 02 - MULTIPLY (opcode, p1, p2, write_index)
     // 03 - INPUT (opcode, write_index)
@@ -29,9 +25,8 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
     // 99 - TERMINATE
 
     let mut i = 0;
-    let program_length = program.len();
 
-    while i < program_length && program[i] != 99 {
+    while i < program.len() && program[i] != 99 {
         let mut full_opcode: Vec<i32> = digitize(&program[i]);
         let opcode: i32;
         let mut parameter_modes: Vec<i32>;
