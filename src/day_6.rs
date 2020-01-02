@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use std::fs;
 use std::io::{prelude::*, BufReader};
 
-pub fn exercise_1() {
+pub fn exercise_1() -> u32 {
     let objects: HashMap<String, Option<String>> = load_input("input_day_06.txt");
     let mut count: u32 = 0;
 
@@ -11,11 +11,10 @@ pub fn exercise_1() {
         count += count_orbits(&objects, object.to_string());
     }
 
-    // should be 294191
-    println!("[D6E1] Number of orbits: {}", count);
+    count
 }
 
-pub fn exercise_2() {
+pub fn exercise_2() -> usize {
     let objects: HashMap<String, Option<String>> = load_input("input_day_06.txt");
 
     let my_parents: HashSet<_> = get_parents(&objects, "YOU".to_string())
@@ -27,14 +26,10 @@ pub fn exercise_2() {
         .cloned()
         .collect();
 
-    // should be 424
-    println!(
-        "[D6E2] shortest orbital transfer path length: {:?}",
-        my_parents
-            .symmetric_difference(&santa_parents)
-            .collect::<HashSet<_>>()
-            .len()
-    );
+    my_parents
+        .symmetric_difference(&santa_parents)
+        .collect::<HashSet<_>>()
+        .len()
 }
 
 fn get_parents(objects: &HashMap<String, Option<String>>, current_object: String) -> Vec<String> {

@@ -4,7 +4,7 @@ use std::hash::Hash;
 use std::io::{prelude::*, BufReader};
 use std::iter::FromIterator;
 
-pub fn exercise_1() {
+pub fn exercise_1() -> i32 {
     let routes: Vec<Vec<String>> = get_routes();
 
     let r1_points: Vec<Point> = get_points(routes[0].to_owned());
@@ -25,11 +25,11 @@ pub fn exercise_1() {
             }
         }
     }
-    // should be 248
-    println!("[D3E1] distance: {:?}", min_distance);
+
+    min_distance
 }
 
-pub fn exercise_2() {
+pub fn exercise_2() -> usize {
     let routes: Vec<Vec<String>> = get_routes();
 
     let r1_points: Vec<Point> = get_points(routes[0].to_owned());
@@ -62,8 +62,8 @@ pub fn exercise_2() {
             }
         }
     }
-    // should be 28580
-    println!("[D3E2] min_path_length: {:?}", min_path_length);
+
+    min_path_length
 }
 
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
