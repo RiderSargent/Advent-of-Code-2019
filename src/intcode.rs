@@ -56,10 +56,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value_1 = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -67,10 +66,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_2: usize = program[i + 2] as usize;
                         value_2 = program[i_2];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error"),
                 }
 
                 let store_index: usize = program[i + 3] as usize;
@@ -89,10 +87,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value_1 = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -100,10 +97,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_2: usize = program[i + 2] as usize;
                         value_2 = program[i_2];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error"),
                 }
 
                 let store_index: usize = program[i + 3] as usize;
@@ -148,10 +144,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 println!("  Output: {}", value);
@@ -170,10 +165,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value_1 = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -181,10 +175,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_2: usize = program[i + 2] as usize;
                         value_2 = program[i_2];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error"),
                 }
 
                 if value_1 != 0 {
@@ -206,10 +199,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value_1 = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -217,10 +209,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_2: usize = program[i + 2] as usize;
                         value_2 = program[i_2];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error"),
                 }
 
                 if value_1 == 0 {
@@ -242,10 +233,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value_1 = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -253,10 +243,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_2: usize = program[i + 2] as usize;
                         value_2 = program[i_2];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error"),
                 }
 
                 let store_index: usize = program[i + 3] as usize;
@@ -281,10 +270,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_1: usize = program[i + 1] as usize;
                         value_1 = program[i_1];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_1 = program[i + 1];
                     }
-                    _ => panic!("Error"),
                 }
 
                 match parameter_modes.pop() {
@@ -292,10 +280,9 @@ pub fn run_program_interactive(mut input: Vec<i32>, mut program: Vec<i32>) -> Ve
                         let i_2: usize = program[i + 2] as usize;
                         value_2 = program[i_2];
                     }
-                    Some(1) => {
+                    Some(_) => {
                         value_2 = program[i + 2];
                     }
-                    _ => panic!("Error"),
                 }
 
                 let store_index: usize = program[i + 3] as usize;
