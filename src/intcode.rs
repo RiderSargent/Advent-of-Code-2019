@@ -17,8 +17,8 @@ pub fn run_program_program(input: Vec<i32>, program: Vec<i32>) -> Vec<i32> {
     run_program(input, program).0
 }
 
-pub fn run_program_output(input: Vec<i32>, program: Vec<i32>) -> Vec<i32> {
-    run_program(input, program).1
+pub fn run_program_output(input: Vec<i32>, program: Vec<i32>) -> i32 {
+    *run_program(input, program).1.last().unwrap()
 }
 
 fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32>) {
