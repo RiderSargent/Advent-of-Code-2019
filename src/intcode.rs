@@ -13,7 +13,15 @@ pub fn load_program(filename: &str) -> Vec<i32> {
     program
 }
 
-pub fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32>) {
+pub fn run_program_program(input: Vec<i32>, program: Vec<i32>) -> Vec<i32> {
+    run_program(input, program).0
+}
+
+pub fn run_program_output(input: Vec<i32>, program: Vec<i32>) -> Vec<i32> {
+    run_program(input, program).1
+}
+
+fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32>) {
     // 01 - ADD (opcode, p1, p2, write_index)
     // 02 - MULTIPLY (opcode, p1, p2, write_index)
     // 03 - INPUT (opcode, write_index)

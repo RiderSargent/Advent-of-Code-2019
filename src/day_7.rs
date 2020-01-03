@@ -39,27 +39,26 @@ fn run_amps(program: Vec<i32>, signals: &Vec<i32>) -> i32 {
 
     s.reverse();
 
-    let a_output = intcode::run_program(vec![0, s.pop().unwrap()], program.clone()).1;
-    let b_output = intcode::run_program(
+    let a_output = intcode::run_program_output(
+        vec![0, s.pop().unwrap()],
+        program.clone()
+    );
+    let b_output = intcode::run_program_output(
         vec![*a_output.last().unwrap(), s.pop().unwrap()],
         program.clone(),
-    )
-    .1;
-    let c_output = intcode::run_program(
+    );
+    let c_output = intcode::run_program_output(
         vec![*b_output.last().unwrap(), s.pop().unwrap()],
         program.clone(),
-    )
-    .1;
-    let d_output = intcode::run_program(
+    );
+    let d_output = intcode::run_program_output(
         vec![*c_output.last().unwrap(), s.pop().unwrap()],
         program.clone(),
-    )
-    .1;
-    let e_output = intcode::run_program(
+    );
+    let e_output = intcode::run_program_output(
         vec![*d_output.last().unwrap(), s.pop().unwrap()],
         program.clone(),
-    )
-    .1;
+    );
 
     *e_output.last().unwrap()
 }
