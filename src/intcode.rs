@@ -197,19 +197,3 @@ fn set_value(program: &mut Vec<i32>, index: usize, value: i32) {
     let write_index: usize = program[index] as usize;
     program[write_index] = value;
 }
-
-fn digitize(n: &i32) -> Vec<i32> {
-    let mut digits: Vec<i32> = Vec::new();
-    let mut remaining = n;
-    let mut next;
-
-    while remaining > &9 {
-        digits.push(remaining % 10);
-        next = remaining / 10;
-        remaining = &next;
-    }
-    digits.push(*remaining);
-    digits.reverse();
-
-    digits
-}
