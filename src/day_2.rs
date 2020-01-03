@@ -16,6 +16,7 @@ pub fn exercise_1() -> i32 {
 pub fn exercise_2() -> i32 {
     let mut current_program: Vec<i32>;
     let mut final_program: Vec<i32> = vec![];
+    let target: i32 = 19690720;
 
     'outer: for i in 0..100 {
         'inner: for j in 0..100 {
@@ -24,7 +25,7 @@ pub fn exercise_2() -> i32 {
             current_program[2] = j;
 
             final_program = intcode::run_program(vec![], current_program).0;
-            if final_program[0] == 19690720 {
+            if final_program[0] == target {
                 break 'outer;
             }
         }
