@@ -194,17 +194,17 @@ fn test_day_5_intcode_10_less_than() {
 #[test]
 fn test_day_5_intcode_10_equal() {
     // output 999 if input < 8; 1000 if input == 8; 1001 if input > 8
-    let mut program: intcode::Program = intcode::Program::new(vec![3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]);
+    let mut program: day_5::Program = day_5::Program::new(vec![3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]);
 
-    assert_eq!(1000, program.run(Some(8), 0).unwrap());
+    assert_eq!(1000, program.run(Some(8), 0).last().unwrap().unwrap());
 }
 
 #[test]
 fn test_day_5_intcode_10_greater_than() {
     // output 999 if input < 8; 1000 if input == 8; 1001 if input > 8
-    let mut program: intcode::Program = intcode::Program::new(vec![3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]);
+    let mut program: day_5::Program = day_5::Program::new(vec![3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]);
 
-    assert_eq!(1001, program.run(Some(10), 0).unwrap());
+    assert_eq!(1001, program.run(Some(10), 0).last().unwrap().unwrap());
 }
 
 
