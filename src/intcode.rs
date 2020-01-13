@@ -35,14 +35,11 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
     let mut output: Vec<i32> = vec![];
     let mut i = 0;
 
-    while i < program.len() && program[i] != 99 {
-        let opcode: Intcode = get_opcode(program[i] % 100);
-
-        let mode_1: i32 = (program[i] / 100) % 10;
-        let mode_2: i32 = (program[i] / 1000) % 10;
+    loop {
+        let opcode: Intcode = Intcode::from(program[i]);
 
         match opcode {
-            Intcode::Add => {
+            Intcode::Add(mode_1, mode_2) => {
                 // ADD - opcode, read 1 index, read 2 index, write index
                 let value_1 = get_value(&program, i, mode_1);
                 let value_2 = get_value(&program, i + 1, mode_2);
@@ -52,7 +49,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 i += 4;
             }
 
-            Intcode::Multiply => {
+            Intcode::Multiply(mode_1, mode_2) => {
                 // MULTIPLY - opcode, read 1 index, read 2 index, write index
                 let value_1 = get_value(&program, i, mode_1);
                 let value_2 = get_value(&program, i + 1, mode_2);
@@ -61,7 +58,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 i += 4;
             }
 
-            Intcode::Input => {
+            Intcode::Input(mode_1) => {
                 // INPUT - opcode, write index
                 // Opcode 3 takes a single integer as input and saves it to the
                 // position given by its only parameter. For example, the
@@ -79,7 +76,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 i += 2;
             }
 
-            Intcode::Output => {
+            Intcode::Output(mode_1) => {
                 // OUTPUT - opcode, read index
                 // Opcode 4 outputs the value of its only parameter. For
                 // example, the instruction 4,50 would output the value at
@@ -90,7 +87,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 i += 2;
             }
 
-            Intcode::JumpIfTrue => {
+            Intcode::JumpIfTrue(mode_1, mode_2) => {
                 // Jump-if-true: if the first parameter is non-zero, it
                 // sets the instruction pointer to the value from the second
                 // parameter. Otherwise, it does nothing.
@@ -104,7 +101,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 }
             }
 
-            Intcode::JumpIfFalse => {
+            Intcode::JumpIfFalse(mode_1, mode_2) => {
                 // Jump-if-false: if the first parameter is zero, it
                 // sets the instruction pointer to the value from the second
                 // parameter. Otherwise, it does nothing.
@@ -118,7 +115,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 }
             }
 
-            Intcode::LessThan => {
+            Intcode::LessThan(mode_1, mode_2) => {
                 // Less than: if the first parameter is less than the
                 // second parameter, it stores 1 in the position given by the
                 // third parameter. Otherwise, it stores 0.
@@ -133,7 +130,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 i += 4;
             }
 
-            Intcode::Equals => {
+            Intcode::Equals(mode_1, mode_2) => {
                 // Equals: if the first parameter is equal to the second
                 // parameter, it stores 1 in the position given by the third
                 // parameter. Otherwise, it stores 0.
@@ -158,29 +155,34 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
 }
 
 enum Intcode {
-    Add,
-    Multiply,
-    Input,
-    Output,
-    JumpIfTrue,
-    JumpIfFalse,
-    LessThan,
-    Equals,
+    Add(i32, i32),
+    Multiply(i32, i32),
+    Input(i32),
+    Output(i32),
+    JumpIfTrue(i32, i32),
+    JumpIfFalse(i32, i32),
+    LessThan(i32, i32),
+    Equals(i32, i32),
     Terminate,
 }
 
-fn get_opcode(code: i32) -> Intcode {
-    match code {
-        1 => Intcode::Add,
-        2 => Intcode::Multiply,
-        3 => Intcode::Input,
-        4 => Intcode::Output,
-        5 => Intcode::JumpIfTrue,
-        6 => Intcode::JumpIfFalse,
-        7 => Intcode::LessThan,
-        8 => Intcode::Equals,
-        99 => Intcode::Terminate,
-        _ => panic!("Error: Invalid Intcode"),
+impl Intcode {
+    fn from(n: i32) -> Intcode {
+        let pm_1: i32 = (n / 100) % 10;
+        let pm_2: i32 = (n / 1000) % 10;
+
+        match n % 100 {
+            1 => Intcode::Add(pm_1, pm_2),
+            2 => Intcode::Multiply(pm_1, pm_2),
+            3 => Intcode::Input(pm_1),
+            4 => Intcode::Output(pm_1),
+            5 => Intcode::JumpIfTrue(pm_1, pm_2),
+            6 => Intcode::JumpIfFalse(pm_1, pm_2),
+            7 => Intcode::LessThan(pm_1, pm_2),
+            8 => Intcode::Equals(pm_1, pm_2),
+            99 => Intcode::Terminate,
+            _ => panic!("Error: Invalid Intcode"),
+        }
     }
 }
 
@@ -195,5 +197,6 @@ fn get_value(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
 
 fn set_value(program: &mut Vec<i32>, index: usize, value: i32) {
     let write_index: usize = program[index] as usize;
+
     program[write_index] = value;
 }
