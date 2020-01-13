@@ -4,42 +4,57 @@ use super::*;
 // --- Intcode -----------------------------------------------------------------
 #[test]
 fn test_day_2_intcode_1() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]);
     let expected: Vec<i32> = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
 fn test_day_2_intcode_2() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![1, 0, 0, 0, 99];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![1, 0, 0, 0, 99]);
     let expected: Vec<i32> = vec![2, 0, 0, 0, 99];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
 fn test_day_2_intcode_3() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![2, 3, 0, 3, 99];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![2, 3, 0, 3, 99]);
     let expected: Vec<i32> = vec![2, 3, 0, 6, 99];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
 fn test_day_2_intcode_4() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![2, 4, 4, 5, 99, 0];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![2, 4, 4, 5, 99, 0]);
     let expected: Vec<i32> = vec![2, 4, 4, 5, 99, 9801];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
 fn test_day_2_intcode_5() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![1, 1, 1, 4, 99, 5, 6, 0, 99];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![1, 1, 1, 4, 99, 5, 6, 0, 99]);
     let expected: Vec<i32> = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
@@ -51,18 +66,24 @@ fn test_day_5_intcode_1() {
 
 #[test]
 fn test_day_5_intcode_2() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![1002, 4, 3, 4, 33];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![1002, 4, 3, 4, 33]);
     let expected: Vec<i32> = vec![1002, 4, 3, 4, 99];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
 fn test_day_5_intcode_3() {
-    let input: Vec<i32> = vec![];
-    let program: Vec<i32> = vec![1101, 100, -1, 4, 0];
+    let input: Option<i32> = None;
+    let mut program: intcode::Program = intcode::Program::new(vec![1101, 100, -1, 4, 0]);
     let expected: Vec<i32> = vec![1101, 100, -1, 4, 99];
-    assert_eq!(expected, intcode::run_program_program(input, program));
+
+    program.run(input, 0);
+
+    assert_eq!(expected, program.memory);
 }
 
 #[test]
