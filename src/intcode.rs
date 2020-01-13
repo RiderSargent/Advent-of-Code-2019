@@ -36,29 +36,29 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
     let mut i = 0;
 
     loop {
-        let opcode: Intcode = Intcode::from(program[i]);
+        let operation: Intcode = Intcode::from(program[i]);
 
-        match opcode {
+        match operation {
             Intcode::Add(mode_1, mode_2) => {
                 // ADD - opcode, read 1 index, read 2 index, write index
-                let value_1 = get_value(&program, i, mode_1);
-                let value_2 = get_value(&program, i + 1, mode_2);
+                let value_1 = get(&program, i, mode_1);
+                let value_2 = get(&program, i + 1, mode_2);
 
-                set_value(&mut program, i + 3, value_1 + value_2);
+                set(&mut program, i + 3, value_1 + value_2);
 
                 i += 4;
             }
 
             Intcode::Multiply(mode_1, mode_2) => {
                 // MULTIPLY - opcode, read 1 index, read 2 index, write index
-                let value_1 = get_value(&program, i, mode_1);
-                let value_2 = get_value(&program, i + 1, mode_2);
+                let value_1 = get(&program, i, mode_1);
+                let value_2 = get(&program, i + 1, mode_2);
 
-                set_value(&mut program, i + 3, value_1 * value_2);
+                set(&mut program, i + 3, value_1 * value_2);
                 i += 4;
             }
 
-            Intcode::Input(mode_1) => {
+            Intcode::Input(_mode_1) => {
                 // INPUT - opcode, write index
                 // Opcode 3 takes a single integer as input and saves it to the
                 // position given by its only parameter. For example, the
@@ -68,7 +68,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
 
                 match input.pop() {
                     Some(value) => {
-                        // TODO: Why can't I do: set_value(&mut program, i_1, value);
+                        // TODO: Why can't I do: set(&mut program, i_1, value);
                         program[i_1] = value;
                     },
                     None => { println!("Error: Missing input."); },
@@ -81,7 +81,7 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 // Opcode 4 outputs the value of its only parameter. For
                 // example, the instruction 4,50 would output the value at
                 // address 50.
-                let value_1 = get_value(&program, i, mode_1);
+                let value_1 = get(&program, i, mode_1);
 
                 output.push(value_1);
                 i += 2;
@@ -91,8 +91,8 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 // Jump-if-true: if the first parameter is non-zero, it
                 // sets the instruction pointer to the value from the second
                 // parameter. Otherwise, it does nothing.
-                let value_1 = get_value(&program, i, mode_1);
-                let value_2 = get_value(&program, i + 1, mode_2);
+                let value_1 = get(&program, i, mode_1);
+                let value_2 = get(&program, i + 1, mode_2);
 
                 if value_1 != 0 {
                     i = value_2 as usize;
@@ -105,8 +105,8 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 // Jump-if-false: if the first parameter is zero, it
                 // sets the instruction pointer to the value from the second
                 // parameter. Otherwise, it does nothing.
-                let value_1 = get_value(&program, i, mode_1);
-                let value_2 = get_value(&program, i + 1, mode_2);
+                let value_1 = get(&program, i, mode_1);
+                let value_2 = get(&program, i + 1, mode_2);
 
                 if value_1 == 0 {
                     i = value_2 as usize;
@@ -119,13 +119,13 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 // Less than: if the first parameter is less than the
                 // second parameter, it stores 1 in the position given by the
                 // third parameter. Otherwise, it stores 0.
-                let value_1 = get_value(&program, i, mode_1);
-                let value_2 = get_value(&program, i + 1, mode_2);
+                let value_1 = get(&program, i, mode_1);
+                let value_2 = get(&program, i + 1, mode_2);
 
                 if value_1 < value_2 {
-                    set_value(&mut program, i + 3, 1);
+                    set(&mut program, i + 3, 1);
                 } else {
-                    set_value(&mut program, i + 3, 0);
+                    set(&mut program, i + 3, 0);
                 }
                 i += 4;
             }
@@ -134,13 +134,13 @@ fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32
                 // Equals: if the first parameter is equal to the second
                 // parameter, it stores 1 in the position given by the third
                 // parameter. Otherwise, it stores 0.
-                let value_1 = get_value(&program, i, mode_1);
-                let value_2 = get_value(&program, i + 1, mode_2);
+                let value_1 = get(&program, i, mode_1);
+                let value_2 = get(&program, i + 1, mode_2);
 
                 if value_1 == value_2 {
-                    set_value(&mut program, i + 3, 1);
+                    set(&mut program, i + 3, 1);
                 } else {
-                    set_value(&mut program, i + 3, 0);
+                    set(&mut program, i + 3, 0);
                 }
                 i += 4;
             }
@@ -186,7 +186,7 @@ impl Intcode {
     }
 }
 
-fn get_value(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
+fn get(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
     let value: i32 = match mode {
         0 => program[program[index + 1] as usize],
         _ => program[index + 1],
@@ -195,7 +195,7 @@ fn get_value(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
     value
 }
 
-fn set_value(program: &mut Vec<i32>, index: usize, value: i32) {
+fn set(program: &mut Vec<i32>, index: usize, value: i32) {
     let write_index: usize = program[index] as usize;
 
     program[write_index] = value;
