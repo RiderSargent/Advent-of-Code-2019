@@ -206,6 +206,7 @@ fn set(program: &mut Vec<i32>, index: usize, value: i32) {
 // -----------------------------------------------------------------------------
 
 
+#[derive(Debug, Clone)]
 pub struct Program {
     pub memory: Vec<i32>,
     pub pointer: usize,
@@ -258,7 +259,9 @@ impl Program {
                             // TODO: Why can't I do: set(&mut self.memory, i_1, value);
                             self.memory[i_1] = value;
                         },
-                        None => { println!("Error: Missing input."); },
+                        None => {
+                            self.memory[i_1] = signal;
+                        },
                     }
                     i += 2;
                 }
