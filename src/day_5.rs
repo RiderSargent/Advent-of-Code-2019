@@ -12,6 +12,21 @@ pub fn exercise_2() -> i32 {
     program.run(Some(5), 0).last().unwrap().unwrap()
 }
 
+fn get(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
+    let value: i32 = match mode {
+        0 => program[program[index + 1] as usize],
+        _ => program[index + 1],
+    };
+
+    value
+}
+
+fn set(program: &mut Vec<i32>, index: usize, value: i32) {
+    let write_index: usize = program[index] as usize;
+
+    program[write_index] = value;
+}
+
 enum Intcode {
     Add(i32, i32),
     Multiply(i32, i32),
@@ -195,21 +210,6 @@ impl Program {
         }
         output
     }
-}
-
-fn get(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
-    let value: i32 = match mode {
-        0 => program[program[index + 1] as usize],
-        _ => program[index + 1],
-    };
-
-    value
-}
-
-fn set(program: &mut Vec<i32>, index: usize, value: i32) {
-    let write_index: usize = program[index] as usize;
-
-    program[write_index] = value;
 }
 
 #[test]
