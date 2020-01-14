@@ -87,30 +87,29 @@ impl Program {
     }
 
     pub fn run(&mut self, mut input: Option<i32>, signal: i32) -> Vec<Option<i32>> {
-        let mut i = 0;
         let mut output: Vec<Option<i32>> = vec![];
 
         loop {
-            let operation: Intcode = Intcode::from(self.memory[i]);
+            let operation: Intcode = Intcode::from(self.memory[self.pointer]);
 
             match operation {
                 Intcode::Add(mode_1, mode_2) => {
                     // ADD - opcode, read 1 index, read 2 index, write index
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
-                    set(&mut self.memory, i + 3, value_1 + value_2);
+                    set(&mut self.memory, self.pointer + 3, value_1 + value_2);
 
-                    i += 4;
+                    self.pointer += 4;
                 }
 
                 Intcode::Multiply(mode_1, mode_2) => {
                     // MULTIPLY - opcode, read 1 index, read 2 index, write index
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
-                    set(&mut self.memory, i + 3, value_1 * value_2);
-                    i += 4;
+                    set(&mut self.memory, self.pointer + 3, value_1 * value_2);
+                    self.pointer += 4;
                 }
 
                 Intcode::Input(_mode_1) => {
@@ -119,7 +118,7 @@ impl Program {
                     // position given by its only parameter. For example, the
                     // instruction 3,50 would take an input value and store it at
                     // address 50.
-                    let i_1: usize = self.memory[i + 1] as usize;
+                    let i_1: usize = self.memory[self.pointer + 1] as usize;
 
                     match input.take() {
                         Some(value) => {
@@ -130,7 +129,7 @@ impl Program {
                             self.memory[i_1] = signal;
                         },
                     }
-                    i += 2;
+                    self.pointer += 2;
                 }
 
                 Intcode::Output(mode_1) => {
@@ -138,9 +137,9 @@ impl Program {
                     // Opcode 4 outputs the value of its only parameter. For
                     // example, the instruction 4,50 would output the value at
                     // address 50.
-                    let value_1 = get(&self.memory, i, mode_1);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
 
-                    i += 2;
+                    self.pointer += 2;
 
                     output.push(Some(value_1));
                 }
@@ -149,13 +148,13 @@ impl Program {
                     // Jump-if-true: if the first parameter is non-zero, it
                     // sets the instruction pointer to the value from the second
                     // parameter. Otherwise, it does nothing.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 != 0 {
-                        i = value_2 as usize;
+                        self.pointer = value_2 as usize;
                     } else {
-                        i += 3;
+                        self.pointer += 3;
                     }
                 }
 
@@ -163,13 +162,13 @@ impl Program {
                     // Jump-if-false: if the first parameter is zero, it
                     // sets the instruction pointer to the value from the second
                     // parameter. Otherwise, it does nothing.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 == 0 {
-                        i = value_2 as usize;
+                        self.pointer = value_2 as usize;
                     } else {
-                        i += 3;
+                        self.pointer += 3;
                     }
                 }
 
@@ -177,30 +176,30 @@ impl Program {
                     // Less than: if the first parameter is less than the
                     // second parameter, it stores 1 in the position given by the
                     // third parameter. Otherwise, it stores 0.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 < value_2 {
-                        set(&mut self.memory, i + 3, 1);
+                        set(&mut self.memory, self.pointer + 3, 1);
                     } else {
-                        set(&mut self.memory, i + 3, 0);
+                        set(&mut self.memory, self.pointer + 3, 0);
                     }
-                    i += 4;
+                    self.pointer += 4;
                 }
 
                 Intcode::Equals(mode_1, mode_2) => {
                     // Equals: if the first parameter is equal to the second
                     // parameter, it stores 1 in the position given by the third
                     // parameter. Otherwise, it stores 0.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 == value_2 {
-                        set(&mut self.memory, i + 3, 1);
+                        set(&mut self.memory, self.pointer + 3, 1);
                     } else {
-                        set(&mut self.memory, i + 3, 0);
+                        set(&mut self.memory, self.pointer + 3, 0);
                     }
-                    i += 4;
+                    self.pointer += 4;
                 }
 
                 Intcode::Terminate => {
