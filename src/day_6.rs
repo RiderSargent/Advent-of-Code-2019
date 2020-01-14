@@ -72,3 +72,14 @@ fn load_input(filename: &str) -> HashMap<String, Option<String>> {
 
     objects
 }
+
+#[test]
+fn test_exercise1() {
+    assert_eq!(294191, exercise_1());
+}
+
+#[test]
+fn test_exercise2() {
+    assert_eq!(424, exercise_2());
+}
+

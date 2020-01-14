@@ -397,3 +397,8 @@ impl Program {
     }
 }
 
+#[test]
+fn test_exercise1() {
+    assert_eq!(24625, exercise_1());
+}
+

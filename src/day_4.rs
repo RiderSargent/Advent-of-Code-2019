@@ -117,3 +117,14 @@ fn password_filter_2(pw: &u32) -> bool {
 
     has_double
 }
+
+#[test]
+fn test_exercise1() {
+    assert_eq!(1955, exercise_1());
+}
+
+#[test]
+fn test_exercise2() {
+    assert_eq!(1319, exercise_2());
+}
+

@@ -6,7 +6,6 @@ mod day_5;
 mod day_6;
 mod day_7;
 mod intcode;
-mod tests;
 
 fn main() {
     // println!("[D1E1] Total fuel: {}", day_1::exercise_1());

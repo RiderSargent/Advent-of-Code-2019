@@ -90,6 +90,7 @@ fn get_routes() -> Vec<Vec<String>> {
     }
 
     // --- Testing -------------------------------------------------------------
+    // TODO: make these actual tests?
     // // distance: 6 -> to (-3, 3)
     // // path length: 30 -> to (-5, 6)
     // routes = vec![
@@ -155,3 +156,14 @@ fn get_points(route: Vec<String>) -> Vec<Point> {
 
     points
 }
+
+#[test]
+fn test_exercise1() {
+    assert_eq!(248, exercise_1());
+}
+
+#[test]
+fn test_exercise2() {
+    assert_eq!(28580, exercise_2());
+}
+

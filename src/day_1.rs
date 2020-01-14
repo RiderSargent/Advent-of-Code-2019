@@ -52,3 +52,14 @@ fn recursively_calculate_fuel_for(n: i32) -> i32 {
         return fuel_for_n + recursively_calculate_fuel_for(fuel_for_n);
     }
 }
+
+#[test]
+fn test_exercise1() {
+    assert_eq!(3303995, exercise_1());
+}
+
+#[test]
+fn test_exercise2() {
+    assert_eq!(4953118, exercise_2());
+}
+
