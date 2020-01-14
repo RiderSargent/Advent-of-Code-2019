@@ -1,11 +1,13 @@
+use std::fs;
 use itertools::Itertools;
 
 pub fn exercise_1() -> i32 {
     let permutations = (0..5).permutations(5);
+    let amp: Program = Program::new_from_file("input_day_07.txt");
     let mut max = 0;
 
     for p in permutations {
-        let output = run_amps(&p);
+        let output = run_amps_1(&p, amp.clone());
         if output > max {
             max = output;
         }
@@ -14,188 +16,69 @@ pub fn exercise_1() -> i32 {
     max
 }
 
-fn run_amps(phase_settings: &Vec<i32>) -> i32 {
-    // should be 43210
-    // run_amps(vec![3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0], vec![4,3,2,1,0])
+pub fn exercise_2() -> i32 {
+    let permutations = (5..10).permutations(5);
+    let amp: Program = Program::new_from_file("input_day_07.txt");
+    let mut max = 0;
 
-    // should be 54321
-    // run_amps(vec![3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0], vec![0,1,2,3,4])
+    for p in permutations {
+        let output = run_amps_2(&p, amp.clone());
+        if output > max {
+            max = output;
+        }
+    }
 
-    // should be 65210
-    // run_amps(vec![3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0], vec![1,0,4,3,2])
+    max
+}
 
-    // let amp = vec![3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0];
-
-    let amp = load_program("input_day_07.txt");
+fn run_amps_1(phase_settings: &Vec<i32>, amp: Program) -> i32 {
     let phase_settings: Vec<i32> = phase_settings.clone();
 
     let mut signal: i32 = 0;
 
     for s in phase_settings {
-        signal = run_program_output(
-            vec![signal, s],
-            amp.clone()
-        );
+        signal = amp.clone().run(Some(s), signal).unwrap();
     }
 
     signal
 }
 
+fn run_amps_2(phase_settings: &Vec<i32>, master_amp: Program) -> i32 {
+    let amp_1: Program = master_amp.clone();
+    let amp_2: Program = master_amp.clone();
+    let amp_3: Program = master_amp.clone();
+    let amp_4: Program = master_amp.clone();
+    let amp_5: Program = master_amp.clone();
 
-use std::fs;
+    let mut amps = [amp_1, amp_2, amp_3, amp_4, amp_5];
 
-pub fn load_program(filename: &str) -> Vec<i32> {
-    let raw_program: String = fs::read_to_string(filename).expect("Error reading file");
-    let program: Vec<i32> = raw_program
-        .trim()
-        .split(',')
-        .into_iter()
-        .map(|n| n.parse::<i32>())
-        .filter_map(Result::ok)
-        .collect();
+    let mut phase_settings = phase_settings.iter().cloned();
+    let mut signal: i32 = 0;
 
-    program
-}
-
-pub fn run_program_program(input: Vec<i32>, program: Vec<i32>) -> Vec<i32> {
-    run_program(input, program).0
-}
-
-pub fn run_program_output(input: Vec<i32>, program: Vec<i32>) -> i32 {
-    *run_program(input, program).1.last().unwrap()
-}
-
-fn run_program(mut input: Vec<i32>, mut program: Vec<i32>) -> (Vec<i32>, Vec<i32>) {
-    // 01 - ADD (opcode, p1, p2, write_index)
-    // 02 - MULTIPLY (opcode, p1, p2, write_index)
-    // 03 - INPUT (opcode, write_index)
-    // 04 - OUTPUT (opcode, read_index)
-    // 05 - JUMP-IF-TRUE (opcode, condition, new_pointer_target)
-    // 06 - JUMP-IF-FALSE (opcode, condition, new_pointer_target)
-    // 07 - LESS-THAN (opcode, first_param, second_param, write_index)
-    // 08 - EQUALS (opcode, first_param, second_param, write_index)
-    // 99 - TERMINATE
-
-    let mut output: Vec<i32> = vec![];
-    let mut i = 0;
-
-    loop {
-        let operation: Intcode = Intcode::from(program[i]);
-
-        match operation {
-            Intcode::Add(mode_1, mode_2) => {
-                // ADD - opcode, read 1 index, read 2 index, write index
-                let value_1 = get(&program, i, mode_1);
-                let value_2 = get(&program, i + 1, mode_2);
-
-                set(&mut program, i + 3, value_1 + value_2);
-
-                i += 4;
-            }
-
-            Intcode::Multiply(mode_1, mode_2) => {
-                // MULTIPLY - opcode, read 1 index, read 2 index, write index
-                let value_1 = get(&program, i, mode_1);
-                let value_2 = get(&program, i + 1, mode_2);
-
-                set(&mut program, i + 3, value_1 * value_2);
-                i += 4;
-            }
-
-            Intcode::Input(_mode_1) => {
-                // INPUT - opcode, write index
-                // Opcode 3 takes a single integer as input and saves it to the
-                // position given by its only parameter. For example, the
-                // instruction 3,50 would take an input value and store it at
-                // address 50.
-                let i_1: usize = program[i + 1] as usize;
-
-                match input.pop() {
-                    Some(value) => {
-                        // TODO: Why can't I do: set(&mut program, i_1, value);
-                        program[i_1] = value;
-                    },
-                    None => { println!("Error: Missing input."); },
-                }
-                i += 2;
-            }
-
-            Intcode::Output(mode_1) => {
-                // OUTPUT - opcode, read index
-                // Opcode 4 outputs the value of its only parameter. For
-                // example, the instruction 4,50 would output the value at
-                // address 50.
-                let value_1 = get(&program, i, mode_1);
-
-                output.push(value_1);
-                i += 2;
-            }
-
-            Intcode::JumpIfTrue(mode_1, mode_2) => {
-                // Jump-if-true: if the first parameter is non-zero, it
-                // sets the instruction pointer to the value from the second
-                // parameter. Otherwise, it does nothing.
-                let value_1 = get(&program, i, mode_1);
-                let value_2 = get(&program, i + 1, mode_2);
-
-                if value_1 != 0 {
-                    i = value_2 as usize;
-                } else {
-                    i += 3;
-                }
-            }
-
-            Intcode::JumpIfFalse(mode_1, mode_2) => {
-                // Jump-if-false: if the first parameter is zero, it
-                // sets the instruction pointer to the value from the second
-                // parameter. Otherwise, it does nothing.
-                let value_1 = get(&program, i, mode_1);
-                let value_2 = get(&program, i + 1, mode_2);
-
-                if value_1 == 0 {
-                    i = value_2 as usize;
-                } else {
-                    i += 3;
-                }
-            }
-
-            Intcode::LessThan(mode_1, mode_2) => {
-                // Less than: if the first parameter is less than the
-                // second parameter, it stores 1 in the position given by the
-                // third parameter. Otherwise, it stores 0.
-                let value_1 = get(&program, i, mode_1);
-                let value_2 = get(&program, i + 1, mode_2);
-
-                if value_1 < value_2 {
-                    set(&mut program, i + 3, 1);
-                } else {
-                    set(&mut program, i + 3, 0);
-                }
-                i += 4;
-            }
-
-            Intcode::Equals(mode_1, mode_2) => {
-                // Equals: if the first parameter is equal to the second
-                // parameter, it stores 1 in the position given by the third
-                // parameter. Otherwise, it stores 0.
-                let value_1 = get(&program, i, mode_1);
-                let value_2 = get(&program, i + 1, mode_2);
-
-                if value_1 == value_2 {
-                    set(&mut program, i + 3, 1);
-                } else {
-                    set(&mut program, i + 3, 0);
-                }
-                i += 4;
-            }
-
-            Intcode::Terminate => {
-                break;
-            }
+    for i in (0..5).cycle() {
+        if let Some(s) = amps[i].run(phase_settings.next(), signal) {
+            signal = s;
+        } else {
+            break
         }
     }
 
-    (program, output)
+    signal
+}
+
+fn get(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
+    let value: i32 = match mode {
+        0 => program[program[index + 1] as usize],
+        _ => program[index + 1],
+    };
+
+    value
+}
+
+fn set(program: &mut Vec<i32>, index: usize, value: i32) {
+    let write_index: usize = program[index] as usize;
+
+    program[write_index] = value;
 }
 
 enum Intcode {
@@ -230,21 +113,6 @@ impl Intcode {
     }
 }
 
-fn get(program: &Vec<i32>, index: usize, mode: i32) -> i32 {
-    let value: i32 = match mode {
-        0 => program[program[index + 1] as usize],
-        _ => program[index + 1],
-    };
-
-    value
-}
-
-fn set(program: &mut Vec<i32>, index: usize, value: i32) {
-    let write_index: usize = program[index] as usize;
-
-    program[write_index] = value;
-}
-
 #[derive(Debug, Clone)]
 pub struct Program {
     pub memory: Vec<i32>,
@@ -273,29 +141,27 @@ impl Program {
     }
 
     pub fn run(&mut self, mut input: Option<i32>, signal: i32) -> Option<i32> {
-        let mut i = 0;
-
         loop {
-            let operation: Intcode = Intcode::from(self.memory[i]);
+            let operation: Intcode = Intcode::from(self.memory[self.pointer]);
 
             match operation {
                 Intcode::Add(mode_1, mode_2) => {
                     // ADD - opcode, read 1 index, read 2 index, write index
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
-                    set(&mut self.memory, i + 3, value_1 + value_2);
+                    set(&mut self.memory, self.pointer + 3, value_1 + value_2);
 
-                    i += 4;
+                    self.pointer += 4;
                 }
 
                 Intcode::Multiply(mode_1, mode_2) => {
                     // MULTIPLY - opcode, read 1 index, read 2 index, write index
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
-                    set(&mut self.memory, i + 3, value_1 * value_2);
-                    i += 4;
+                    set(&mut self.memory, self.pointer + 3, value_1 * value_2);
+                    self.pointer += 4;
                 }
 
                 Intcode::Input(_mode_1) => {
@@ -304,7 +170,7 @@ impl Program {
                     // position given by its only parameter. For example, the
                     // instruction 3,50 would take an input value and store it at
                     // address 50.
-                    let i_1: usize = self.memory[i + 1] as usize;
+                    let i_1: usize = self.memory[self.pointer + 1] as usize;
 
                     match input.take() {
                         Some(value) => {
@@ -315,7 +181,7 @@ impl Program {
                             self.memory[i_1] = signal;
                         },
                     }
-                    i += 2;
+                    self.pointer += 2;
                 }
 
                 Intcode::Output(mode_1) => {
@@ -323,9 +189,9 @@ impl Program {
                     // Opcode 4 outputs the value of its only parameter. For
                     // example, the instruction 4,50 would output the value at
                     // address 50.
-                    let value_1 = get(&self.memory, i, mode_1);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
 
-                    i += 2;
+                    self.pointer += 2;
 
                     return Some(value_1);
                 }
@@ -334,13 +200,13 @@ impl Program {
                     // Jump-if-true: if the first parameter is non-zero, it
                     // sets the instruction pointer to the value from the second
                     // parameter. Otherwise, it does nothing.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 != 0 {
-                        i = value_2 as usize;
+                        self.pointer = value_2 as usize;
                     } else {
-                        i += 3;
+                        self.pointer += 3;
                     }
                 }
 
@@ -348,13 +214,13 @@ impl Program {
                     // Jump-if-false: if the first parameter is zero, it
                     // sets the instruction pointer to the value from the second
                     // parameter. Otherwise, it does nothing.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 == 0 {
-                        i = value_2 as usize;
+                        self.pointer = value_2 as usize;
                     } else {
-                        i += 3;
+                        self.pointer += 3;
                     }
                 }
 
@@ -362,30 +228,30 @@ impl Program {
                     // Less than: if the first parameter is less than the
                     // second parameter, it stores 1 in the position given by the
                     // third parameter. Otherwise, it stores 0.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 < value_2 {
-                        set(&mut self.memory, i + 3, 1);
+                        set(&mut self.memory, self.pointer + 3, 1);
                     } else {
-                        set(&mut self.memory, i + 3, 0);
+                        set(&mut self.memory, self.pointer + 3, 0);
                     }
-                    i += 4;
+                    self.pointer += 4;
                 }
 
                 Intcode::Equals(mode_1, mode_2) => {
                     // Equals: if the first parameter is equal to the second
                     // parameter, it stores 1 in the position given by the third
                     // parameter. Otherwise, it stores 0.
-                    let value_1 = get(&self.memory, i, mode_1);
-                    let value_2 = get(&self.memory, i + 1, mode_2);
+                    let value_1 = get(&self.memory, self.pointer, mode_1);
+                    let value_2 = get(&self.memory, self.pointer + 1, mode_2);
 
                     if value_1 == value_2 {
-                        set(&mut self.memory, i + 3, 1);
+                        set(&mut self.memory, self.pointer + 3, 1);
                     } else {
-                        set(&mut self.memory, i + 3, 0);
+                        set(&mut self.memory, self.pointer + 3, 0);
                     }
-                    i += 4;
+                    self.pointer += 4;
                 }
 
                 Intcode::Terminate => {
@@ -398,7 +264,52 @@ impl Program {
 }
 
 #[test]
+fn test_run_amps_1_a() {
+    let amp: Program = Program::new(vec![3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0]);
+    let phase_settings: Vec<i32> = vec![4,3,2,1,0];
+
+    assert_eq!(43210, run_amps_1(&phase_settings, amp));
+}
+
+#[test]
+fn test_run_amps_1_b() {
+    let amp: Program = Program::new(vec![3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0]);
+    let phase_settings: Vec<i32> = vec![0,1,2,3,4];
+
+    assert_eq!(54321, run_amps_1(&phase_settings, amp));
+}
+
+#[test]
+fn test_run_amps_1_c() {
+    let amp: Program = Program::new(vec![3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0]);
+    let phase_settings: Vec<i32> = vec![1,0,4,3,2];
+
+    assert_eq!(65210, run_amps_1(&phase_settings, amp));
+}
+
+#[test]
+fn test_run_amps_2_a() {
+    let amp: Program = Program::new(vec![3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]);
+    let phase_settings: Vec<i32> = vec![9,8,7,6,5];
+
+    assert_eq!(139629729, run_amps_2(&phase_settings, amp));
+}
+
+#[test]
+fn test_run_amps_2_b() {
+    let amp: Program = Program::new(vec![3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10]);
+    let phase_settings: Vec<i32> = vec![9,7,8,5,6];
+
+    assert_eq!(18216, run_amps_2(&phase_settings, amp));
+}
+
+#[test]
 fn test_exercise1() {
     assert_eq!(24625, exercise_1());
+}
+
+#[test]
+fn test_exercise2() {
+    assert_eq!(36497698, exercise_2());
 }
 
