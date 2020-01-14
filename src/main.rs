@@ -5,6 +5,7 @@ mod day_4;
 mod day_5;
 mod day_6;
 mod day_7;
+mod day_8;
 
 fn main() {
     // println!("[D1E1] Total fuel: {}", day_1::exercise_1());
@@ -21,4 +22,5 @@ fn main() {
     // println!("[D6E2] shortest orbital transfer path length: {:?}", day_6::exercise_2());
     // println!("[D7E1] max thruster signal: {:?}", day_7::exercise_1());
     // println!("[D7E2] max thruster signal: {:?}", day_7::exercise_2());
+    // println!("[D8E1] number of ones times the number of twos: {:?}", day_8::exercise_1());
 }
