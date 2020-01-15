@@ -82,4 +82,3 @@ fn test_exercise1() {
 fn test_exercise2() {
     assert_eq!(424, exercise_2());
 }
-

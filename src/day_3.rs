@@ -166,4 +166,3 @@ fn test_exercise1() {
 fn test_exercise2() {
     assert_eq!(28580, exercise_2());
 }
-
